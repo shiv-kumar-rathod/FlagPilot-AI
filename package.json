@@ -1,0 +1,19 @@
+{
+  "name": "flagpilot-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A safety-first Flagsmith feature flag debt manager Agent Skill",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "scan": "node skills/flag-debt-manager/scripts/discover-flags.js",
+    "report": "node skills/flag-debt-manager/scripts/generate-report.js --live",
+    "report:offline": "node skills/flag-debt-manager/scripts/generate-report.js --offline"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "acorn": "^8.19.0"
+  }
+}

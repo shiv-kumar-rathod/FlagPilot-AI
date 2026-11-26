@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Generated output
+reports/
+coverage/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+flagsmith.json
+*.local

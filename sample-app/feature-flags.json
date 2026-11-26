@@ -1,0 +1,30 @@
+﻿[
+  {
+    "id": 305177,
+    "name": "show_demo_button",
+    "type": "multivariate",
+    "default_value": "control",
+    "enabled": false
+  },
+  {
+    "id": 305178,
+    "name": "checkout_v2",
+    "type": "boolean",
+    "default_value": false,
+    "enabled": true
+  },
+  {
+    "id": 305179,
+    "name": "legacy_banner",
+    "type": "boolean",
+    "default_value": false,
+    "enabled": false
+  },
+  {
+    "id": 305180,
+    "name": "payment_retry",
+    "type": "boolean",
+    "default_value": true,
+    "enabled": true
+  }
+]
