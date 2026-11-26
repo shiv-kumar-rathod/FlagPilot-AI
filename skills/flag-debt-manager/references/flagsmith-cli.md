@@ -1,4 +1,4 @@
-
+﻿
 # Flagsmith CLI Reference for FlagPilot AI
 
 ## Purpose
@@ -39,7 +39,7 @@ Never request that users paste access tokens or API keys into chat.
 The FlagPilot discovery script uses this read-only command:
 
 ```powershell
-flagsmith feature list --organisation "<organisation>" --project "<project>" --json
+flagsmith feature list --organisation "<organisation>" --project "<project>" --jq '[.[] | {id, name, type, default_value, enabled}]'
 ```
 
 The command lists feature flags in the selected project.

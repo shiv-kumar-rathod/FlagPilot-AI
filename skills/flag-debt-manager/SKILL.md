@@ -52,7 +52,7 @@ Both `--organisation` and `--project` are required. The discovery script does no
 This invokes the Flagsmith feature-list operation through the bundled discovery script:
 
 ```text
-flagsmith feature list --organisation <organisation> --project <project> --json
+flagsmith feature list --organisation <organisation> --project <project> --jq '[.[] | {id, name, type, default_value, enabled}]'
 ```
 
 Treat the returned flag list as the discovery snapshot, not proof of application usage.
