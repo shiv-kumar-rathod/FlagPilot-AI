@@ -1,9 +1,9 @@
-
-# FlagPilot AI 🚩
+﻿
+# FlagPilot AI ðŸš©
 
 ### Your AI-powered feature flag debt manager for Flagsmith
 
-**Track 4 — Flagsmith Agent Skills | Toggle Wars Hackathon**
+**Track 4 â€” Flagsmith Agent Skills | Toggle Wars Hackathon**
 
 FlagPilot AI helps developers discover, investigate, and manage potential feature-flag debt through a safety-first Agent Skill powered by the Flagsmith CLI.
 
@@ -82,35 +82,35 @@ The current implementation performs discovery, scanning, classification, and rep
 
 ```text
 FlagPilot-AI/
-├── docs/
-│   ├── ARCHITECTURE.md
-│   └── TESTING.md
-├── sample-app/
-│   ├── feature-flags.json
-│   └── src/
-├── skills/
-│   └── flag-debt-manager/
-│       ├── SKILL.md
-│       ├── assets/
-│       │   └── report-template.md
-│       ├── references/
-│       │   ├── flagsmith-cli.md
-│       │   └── safety-policy.md
-│       └── scripts/
-│           ├── classify-risks.js
-│           ├── discover-flags.js
-│           ├── generate-report.js
-│           └── scan-references.js
-├── tests/
-│   ├── fixtures/
-│   ├── classifier.test.js
-│   ├── discovery.test.js
-│   ├── report.test.js
-│   └── scanner.test.js
-├── .env.example
-├── .gitignore
-├── package.json
-└── README.md
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ ARCHITECTURE.md
+â”‚   â””â”€â”€ TESTING.md
+â”œâ”€â”€ sample-app/
+â”‚   â”œâ”€â”€ feature-flags.json
+â”‚   â””â”€â”€ src/
+â”œâ”€â”€ skills/
+â”‚   â””â”€â”€ flag-debt-manager/
+â”‚       â”œâ”€â”€ SKILL.md
+â”‚       â”œâ”€â”€ assets/
+â”‚       â”‚   â””â”€â”€ report-template.md
+â”‚       â”œâ”€â”€ references/
+â”‚       â”‚   â”œâ”€â”€ flagsmith-cli.md
+â”‚       â”‚   â””â”€â”€ safety-policy.md
+â”‚       â””â”€â”€ scripts/
+â”‚           â”œâ”€â”€ classify-risks.js
+â”‚           â”œâ”€â”€ discover-flags.js
+â”‚           â”œâ”€â”€ generate-report.js
+â”‚           â””â”€â”€ scan-references.js
+â”œâ”€â”€ tests/
+â”‚   â”œâ”€â”€ fixtures/
+â”‚   â”œâ”€â”€ classifier.test.js
+â”‚   â”œâ”€â”€ discovery.test.js
+â”‚   â”œâ”€â”€ report.test.js
+â”‚   â””â”€â”€ scanner.test.js
+â”œâ”€â”€ .env.example
+â”œâ”€â”€ .gitignore
+â”œâ”€â”€ package.json
+â””â”€â”€ README.md
 ```
 
 ## Installation
@@ -125,7 +125,7 @@ FlagPilot-AI/
 Clone the repository:
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/shiv-kumar-rathod/FlagPilot-AI.git
 cd FlagPilot-AI
 ```
 
@@ -278,10 +278,11 @@ The skill guides an AI coding agent through the Flagsmith feature-flag audit wor
 
 **SSTECH**
 
-Built for the WeMakeDevs × Flagsmith Toggle Wars Hackathon.
+Built for the WeMakeDevs Ã— Flagsmith Toggle Wars Hackathon.
 
 ## Project status
 
 The current implementation includes working CLI discovery, JavaScript scanning, risk classification, Markdown report generation, and automated tests.
 
 Further development will focus on improving evidence quality, expanding language support, and preparing human-approved cleanup workflows.
+
