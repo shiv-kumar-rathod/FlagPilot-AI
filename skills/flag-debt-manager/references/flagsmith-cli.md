@@ -17,7 +17,7 @@ The installed CLI's `--help` output is the authority for the user's installed ve
 Check the CLI installation:
 
 ```powershell
-flagsmith version
+flagsmith --version
 ```
 
 Check available commands:
