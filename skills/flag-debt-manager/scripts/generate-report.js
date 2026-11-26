@@ -1,4 +1,3 @@
-
 "use strict";
 
 const fs = require("node:fs");
@@ -120,25 +119,48 @@ function generateMarkdownReport(results, generatedAt = new Date(), metadata = {}
   return lines.join("\n");
 }
 
-function main(args = process.argv.slice(2)) {
+function main(args = process.argv.slice(2), dependencies = {}) {
   const root = process.cwd();
+  const discover = dependencies.discoverFlags || discoverFlags;
 
   let offline = false;
   let live = false;
   let sourceArgument = null;
+  let organisation = null;
+  let project = null;
 
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
 
     if (arg === "--offline") {
+      if (offline) throw new Error("--offline was supplied more than once.");
       offline = true;
     } else if (arg === "--live") {
+      if (live) throw new Error("--live was supplied more than once.");
       live = true;
-    } else if (arg === "--source") {
-      if (!args[i + 1] || args[i + 1].startsWith("--")) {
-        throw new Error("--source requires a directory path.");
+    } else if (
+      arg === "--source" ||
+      arg === "--organisation" ||
+      arg === "--project"
+    ) {
+      const value = args[index + 1];
+
+      if (!value || value.startsWith("--")) {
+        throw new Error(`${arg} requires a value.`);
       }
-      sourceArgument = args[++i];
+
+      if (arg === "--source") {
+        if (sourceArgument !== null) throw new Error("--source was supplied more than once.");
+        sourceArgument = value;
+      } else if (arg === "--organisation") {
+        if (organisation !== null) throw new Error("--organisation was supplied more than once.");
+        organisation = value;
+      } else {
+        if (project !== null) throw new Error("--project was supplied more than once.");
+        project = value;
+      }
+
+      index += 1;
     } else {
       throw new Error(`Unknown argument: ${arg}`);
     }
@@ -152,9 +174,19 @@ function main(args = process.argv.slice(2)) {
     throw new Error("--source is only supported in live mode.");
   }
 
+  if (offline && (organisation !== null || project !== null)) {
+    throw new Error("--organisation and --project are only supported in live mode.");
+  }
+
   if (!offline && !sourceArgument) {
     throw new Error(
-      'Live mode requires a source directory. Example: npm run report -- --source "C:\\path\\to\\your\\app"'
+      'Live mode requires a source directory. Example: npm run report -- --source "C:\\path\\to\\your\\app" --organisation "Your Organisation" --project "Your Project"'
+    );
+  }
+
+  if (!offline && (!organisation || !organisation.trim() || !project || !project.trim())) {
+    throw new Error(
+      'Live mode requires non-empty --organisation and --project values. Example: npm run report -- --source "C:\\path\\to\\your\\app" --organisation "Your Organisation" --project "Your Project"'
     );
   }
 
@@ -175,7 +207,10 @@ function main(args = process.argv.slice(2)) {
           "utf8"
         )
       )
-    : discoverFlags();
+    : discover({
+        organisation: organisation.trim(),
+        project: project.trim()
+      });
 
   const scanResults = scanReferences(flags, sourceDirectory);
   const classifications = classifyFlags(flags, scanResults);
@@ -184,8 +219,8 @@ function main(args = process.argv.slice(2)) {
     dataSource: offline
       ? "Local sample fixture (offline)"
       : "Flagsmith CLI (live read-only discovery)",
-    organisation: offline ? "Sample organisation" : "SHIV KUMAR's Org",
-    project: offline ? "Sample project" : "My first project",
+    organisation: offline ? "Sample organisation" : organisation.trim(),
+    project: offline ? "Sample project" : project.trim(),
     sourceDirectory: path.relative(root, sourceDirectory) || "."
   };
 
@@ -199,6 +234,8 @@ function main(args = process.argv.slice(2)) {
 
   console.log("FlagPilot AI report generated successfully.");
   console.log(`Mode: ${offline ? "Offline sample" : "Live Flagsmith"}`);
+  console.log(`Organisation: ${metadata.organisation}`);
+  console.log(`Project: ${metadata.project}`);
   console.log(`Source directory: ${metadata.sourceDirectory}`);
   console.log(`Flags inspected: ${flags.length}`);
   console.log(`Report: ${path.relative(root, outputPath)}`);

@@ -6,7 +6,8 @@ const assert = require("node:assert/strict");
 const {
   discoverFlags,
   validateFlags,
-  resolveCliEntry
+  resolveCliEntry,
+  parseCliArgs
 } = require("../skills/flag-debt-manager/scripts/discover-flags");
 
 const sampleFlags = [
@@ -66,6 +67,75 @@ test("resolves the CLI entry point from APPDATA", () => {
   }
 });
 
+test("parses explicit organisation and project arguments", () => {
+  assert.deepEqual(
+    parseCliArgs([
+      "--organisation",
+      "Test Org",
+      "--project",
+      "Test Project"
+    ]),
+    {
+      organisation: "Test Org",
+      project: "Test Project"
+    }
+  );
+});
+
+test("rejects missing organisation or project arguments", () => {
+  assert.throws(
+    () => parseCliArgs(["--organisation", "Test Org"]),
+    /Both --organisation and --project are required/
+  );
+
+  assert.throws(
+    () => parseCliArgs(["--project", "Test Project"]),
+    /Both --organisation and --project are required/
+  );
+});
+
+test("rejects unknown and incomplete command-line arguments", () => {
+  assert.throws(
+    () => parseCliArgs(["--unknown", "value"]),
+    /Unknown argument/
+  );
+
+  assert.throws(
+    () => parseCliArgs(["--organisation"]),
+    /Missing value/
+  );
+});
+
+test("requires explicit non-empty scope before executing the CLI", () => {
+  let executed = false;
+
+  assert.throws(
+    () => discoverFlags({
+      cliEntry: __filename,
+      execFileSync: () => {
+        executed = true;
+        return JSON.stringify(sampleFlags);
+      }
+    }),
+    /Organisation and project must be non-empty strings/
+  );
+
+  assert.throws(
+    () => discoverFlags({
+      organisation: "Test Org",
+      project: "   ",
+      cliEntry: __filename,
+      execFileSync: () => {
+        executed = true;
+        return JSON.stringify(sampleFlags);
+      }
+    }),
+    /Organisation and project must be non-empty strings/
+  );
+
+  assert.equal(executed, false);
+});
+
 test("discovers flags using only the read-only feature list command", () => {
   let receivedArguments;
 
@@ -100,6 +170,8 @@ test("discovers flags using only the read-only feature list command", () => {
 test("rejects invalid JSON from the CLI", () => {
   assert.throws(
     () => discoverFlags({
+      organisation: "Test Org",
+      project: "Test Project",
       cliEntry: __filename,
       execFileSync: () => "not-json"
     }),
@@ -110,6 +182,8 @@ test("rejects invalid JSON from the CLI", () => {
 test("reports CLI execution failures without exposing command output", () => {
   assert.throws(
     () => discoverFlags({
+      organisation: "Test Org",
+      project: "Test Project",
       cliEntry: __filename,
       execFileSync: () => {
         throw new Error("sensitive diagnostic detail");

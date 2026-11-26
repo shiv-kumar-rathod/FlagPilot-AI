@@ -1,4 +1,3 @@
-
 "use strict";
 
 const test = require("node:test");
@@ -62,7 +61,6 @@ test("report includes correct summary counts", () => {
 
 test("report includes source reference locations", () => {
   const report = generateMarkdownReport(sampleResults);
-
   assert.match(report, /src\/checkout\.js:2/);
 });
 
@@ -106,15 +104,103 @@ test("live mode rejects a missing source directory", () => {
 
 test("live mode rejects a nonexistent source directory", () => {
   assert.throws(
-    () => main(["--live", "--source", "this-directory-does-not-exist"]),
+    () => main([
+      "--live",
+      "--source",
+      "this-directory-does-not-exist",
+      "--organisation",
+      "Test Org",
+      "--project",
+      "Test Project"
+    ]),
     /Source directory does not exist/
   );
+});
+
+test("live mode requires explicit organisation and project", () => {
+  const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "flagpilot-source-"));
+
+  try {
+    assert.throws(
+      () => main(["--live", "--source", temporaryDirectory]),
+      /requires non-empty --organisation and --project/
+    );
+
+    assert.throws(
+      () => main([
+        "--live",
+        "--source",
+        temporaryDirectory,
+        "--organisation",
+        "Test Org"
+      ]),
+      /requires non-empty --organisation and --project/
+    );
+  } finally {
+    fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+  }
+});
+
+test("live report passes the exact scope to discovery and records it in metadata", () => {
+  const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "flagpilot-source-"));
+  let receivedScope;
+
+  try {
+    main([
+      "--live",
+      "--source",
+      temporaryDirectory,
+      "--organisation",
+      "Audit Org",
+      "--project",
+      "Audit Project"
+    ], {
+      discoverFlags: (scope) => {
+        receivedScope = scope;
+        return [
+          {
+            id: 1,
+            name: "example_flag",
+            type: "STANDARD",
+            default_value: null,
+            enabled: false
+          }
+        ];
+      }
+    });
+
+    assert.deepEqual(receivedScope, {
+      organisation: "Audit Org",
+      project: "Audit Project"
+    });
+
+    const reportPath = path.join(process.cwd(), "reports", "flag-debt-report.md");
+    const report = fs.readFileSync(reportPath, "utf8");
+
+    assert.match(report, /\*\*Organisation:\*\* Audit Org/);
+    assert.match(report, /\*\*Project:\*\* Audit Project/);
+  } finally {
+    fs.rmSync(temporaryDirectory, { recursive: true, force: true });
+  }
 });
 
 test("offline mode rejects the source argument", () => {
   assert.throws(
     () => main(["--offline", "--source", "sample-app/src"]),
     /--source is only supported in live mode/
+  );
+});
+
+test("offline mode rejects explicit live scope arguments", () => {
+  assert.throws(
+    () => main([
+      "--offline",
+      "--organisation",
+      "Test Org",
+      "--project",
+      "Test Project"
+    ]),
+    /only supported in live mode/
   );
 });
 
@@ -129,5 +215,12 @@ test("report rejects unknown command-line arguments", () => {
   assert.throws(
     () => main(["--unexpected"]),
     /Unknown argument/
+  );
+});
+
+test("report rejects missing values for command-line options", () => {
+  assert.throws(
+    () => main(["--live", "--source"]),
+    /--source requires a value/
   );
 });

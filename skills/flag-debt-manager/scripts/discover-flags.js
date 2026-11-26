@@ -4,8 +4,6 @@ const { execFileSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const DEFAULT_ORGANISATION = "SHIV KUMAR's Org";
-const DEFAULT_PROJECT = "My first project";
 const CLI_TIMEOUT_MS = 15000;
 const MAX_BUFFER_BYTES = 1024 * 1024;
 
@@ -61,9 +59,43 @@ function validateFlags(data) {
   });
 }
 
+function parseCliArgs(args) {
+  const options = {};
+
+  for (let index = 0; index < args.length; index += 1) {
+    const argument = args[index];
+
+    if (argument !== "--organisation" && argument !== "--project") {
+      throw new Error(`Unknown argument: ${argument}`);
+    }
+
+    const key = argument.slice(2);
+
+    if (Object.hasOwn(options, key)) {
+      throw new Error(`Argument supplied more than once: ${argument}`);
+    }
+
+    const value = args[index + 1];
+
+    if (!value || value.startsWith("--")) {
+      throw new Error(`Missing value for ${argument}.`);
+    }
+
+    options[key] = value;
+    index += 1;
+  }
+
+  if (!options.organisation || !options.project) {
+    throw new Error(
+      'Both --organisation and --project are required. Example: npm run scan -- --organisation "Your Organisation" --project "Your Project"'
+    );
+  }
+
+  return options;
+}
+
 function discoverFlags(options = {}) {
-  const organisation = options.organisation || DEFAULT_ORGANISATION;
-  const project = options.project || DEFAULT_PROJECT;
+  const { organisation, project } = options;
   const executable = options.executable || process.execPath;
   const cliEntry = options.cliEntry || resolveCliEntry();
   const runCommand = options.execFileSync || execFileSync;
@@ -91,9 +123,9 @@ function discoverFlags(options = {}) {
         "feature",
         "list",
         "--organisation",
-        organisation,
+        organisation.trim(),
         "--project",
-        project,
+        project.trim(),
         "--json"
       ],
       {
@@ -123,7 +155,8 @@ function discoverFlags(options = {}) {
 
 if (require.main === module) {
   try {
-    const flags = discoverFlags();
+    const options = parseCliArgs(process.argv.slice(2));
+    const flags = discoverFlags(options);
 
     console.log(JSON.stringify(flags, null, 2));
     console.log(`\nDiscovered ${flags.length} feature flag(s).`);
@@ -136,5 +169,6 @@ if (require.main === module) {
 module.exports = {
   discoverFlags,
   validateFlags,
-  resolveCliEntry
+  resolveCliEntry,
+  parseCliArgs
 };

@@ -1,4 +1,3 @@
-
 ---
 name: flag-debt-manager
 description: Audits Flagsmith feature flags for potential stale-flag debt using the Flagsmith CLI and local source-code analysis. Use when investigating unused flags, reducing feature-flag debt, reviewing flag cleanup candidates, or preparing a safe cleanup plan.
@@ -42,15 +41,15 @@ Do not print credentials or SDK keys in reports.
 
 ### 3. Discover feature flags
 
-Use the existing read-only discovery workflow:
+Use the read-only discovery workflow with an explicitly selected organisation and project:
 
 ```powershell
-npm run scan
+npm run scan -- --organisation "<organisation>" --project "<project>"
 ```
 
-This invokes the Flagsmith feature-list operation through the bundled discovery script.
+Both `--organisation` and `--project` are required. The discovery script does not select a default organisation or project. Confirm the intended scope before running the command.
 
-The discovery implementation uses:
+This invokes the Flagsmith feature-list operation through the bundled discovery script:
 
 ```text
 flagsmith feature list --organisation <organisation> --project <project> --json
@@ -64,13 +63,15 @@ If discovery fails, report the error and stop. Do not invent flag data or silent
 
 ### 4. Scan application source
 
-For a live audit, require the user to identify the source directory.
+For a live audit, require the user to identify the source directory, organisation, and project.
 
 Run:
 
 ```powershell
-npm run report -- --source "<application-source-directory>"
+npm run report -- --source "<application-source-directory>" --organisation "<organisation>" --project "<project>"
 ```
+
+The report command passes the same explicit organisation and project to discovery and records those values in the report metadata.
 
 The current scanner supports JavaScript `.js` files and recursively searches nested directories.
 
@@ -133,6 +134,14 @@ Explain:
 
 Clearly distinguish a live Flagsmith discovery from an offline sample report.
 
+For an offline demonstration only, run:
+
+```powershell
+npm run report:offline
+```
+
+Offline mode uses the bundled sample fixture and sample source. It does not contact Flagsmith and must never be presented as a live audit.
+
 ### 7. Investigate before proposing cleanup
 
 For every potential cleanup candidate, recommend checking:
@@ -187,6 +196,7 @@ If approval is not explicit, remain in read-only mode.
 These rules always apply:
 
 - Discovery and reporting are read-only.
+- Live discovery requires an explicit organisation and project.
 - Never expose credentials.
 - Never silently substitute sample data for live data.
 - Never interpret absence of static references as proof of non-use.
