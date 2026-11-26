@@ -47,10 +47,10 @@ The command lists feature flags in the selected project.
 For the current FlagPilot implementation, discovery is performed through:
 
 ```powershell
-npm run scan
+npm run scan -- --organisation "<organisation>" --project "<project>"
 ```
 
-The script invokes the Flagsmith CLI, parses JSON output, validates feature records, and returns normalized flag data.
+Both organisation and project must be supplied explicitly. The script invokes the Flagsmith CLI, parses JSON output, validates feature records, and returns normalized flag data.
 
 The current implementation expects each feature record to contain:
 
@@ -76,10 +76,10 @@ This uses the bundled sample fixture and sample JavaScript application. It does 
 ### Live report
 
 ```powershell
-npm run report -- --source "<application-source-directory>"
+npm run report -- --source "<application-source-directory>" --organisation "<organisation>" --project "<project>"
 ```
 
-This discovers flags from the configured Flagsmith organisation and project, then scans the explicitly selected source directory.
+This discovers flags from the explicitly supplied Flagsmith organisation and project, then scans the explicitly selected source directory. Both scope arguments are required.
 
 The source directory must exist.
 

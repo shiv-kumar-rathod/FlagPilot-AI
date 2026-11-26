@@ -1,4 +1,4 @@
-﻿
+
 # FlagPilot AI ðŸš©
 
 ### Your AI-powered feature flag debt manager for Flagsmith
@@ -170,23 +170,23 @@ This uses bundled sample flags and the sample application. It does not contact F
 ### 3. Discover live Flagsmith flags
 
 ```bash
-npm run scan
+npm run scan -- --organisation "<organisation>" --project "<project>"
 ```
 
-This uses the configured organisation and project in the discovery script.
+This requires an explicitly supplied organisation and project. No default scope is assumed.
 
 ### 4. Generate a live feature-flag debt report
 
 Select the source directory of the application you want to audit:
 
 ```bash
-npm run report -- --source "./path/to/your/application/src"
+npm run report -- --source "./path/to/your/application/src" --organisation "<organisation>" --project "<project>"
 ```
 
 On Windows PowerShell, for example:
 
 ```powershell
-npm run report -- --source ".\sample-app\src"
+npm run report -- --source ".\sample-app\src" --organisation "<organisation>" --project "<project>"
 ```
 
 Live mode requires an explicit source directory. It does not silently scan the bundled sample application.
