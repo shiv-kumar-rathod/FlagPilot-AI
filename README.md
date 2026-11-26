@@ -140,7 +140,7 @@ Verify the installation:
 ```bash
 node --version
 npm --version
-flagsmith version
+flagsmith --version
 ```
 
 Authenticate using the Flagsmith CLI's supported login flow:
