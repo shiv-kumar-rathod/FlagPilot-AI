@@ -199,6 +199,25 @@ The report is generated at:
 reports/flag-debt-report.md
 ```
 
+## CLI output efficiency
+
+FlagPilot reduces unnecessary Flagsmith CLI output by projecting only the five fields required by the discovery workflow:
+
+`id`, `name`, `type`, `default_value`, and `enabled`.
+
+In a live, read-only comparison using one feature flag:
+
+| Measurement | Full CLI JSON | Projected CLI JSON |
+|---|---:|---:|
+| Raw stdout size | 142 bytes | 105 bytes |
+| Output lines | 9 | 1 |
+
+This is a **37-byte (26.06%) reduction** in the observed CLI output. Both responses contained the same flag, and all five required field values matched.
+
+**Measurement scope:** One Flagsmith project, one feature flag, one observed run. Results may vary with the number and contents of flags.
+
+**Important:** This measures CLI output bytes, not language-model tokens, API cost, or end-to-end agent efficiency. It should not be interpreted as a measured token reduction.
+
 ## Evidence classification
 
 FlagPilot uses conservative classifications.
