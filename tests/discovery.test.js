@@ -161,7 +161,8 @@ test("discovers flags using only the read-only feature list command", () => {
     "Test Org",
     "--project",
     "Test Project",
-    "--json"
+    "--jq",
+    "[.[] | {id, name, type, default_value, enabled}]"
   ]);
 
   assert.equal(receivedArguments.options.shell, undefined);

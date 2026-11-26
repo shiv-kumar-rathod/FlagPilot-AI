@@ -126,7 +126,8 @@ function discoverFlags(options = {}) {
         organisation.trim(),
         "--project",
         project.trim(),
-        "--json"
+        "--jq",
+        "[.[] | {id, name, type, default_value, enabled}]"
       ],
       {
         encoding: "utf8",
